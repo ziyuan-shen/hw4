@@ -27,6 +27,15 @@ nasa <- readRDS(file = "nasa.rds")
 
 ## Task1
 ```{r task-1}
+nasa_df <- nasa %>%
+  lapply(unlist) %>%
+  lapply(data.frame, stringsAsFactors = FALSE) %>%
+  lapply(t) %>%
+  lapply(data.frame, stringsAsFactors = FALSE) %>%
+  bind_rows()
+```
+<!--
+```{r task-1}
 #easy_df <- data.frame(lapply(easy_df, unlist), stringsAsFactoers=FALSE)
 var_names <- names(nasa[[1]])
 easy_part <- map(nasa, `[`, var_names[1:9])
@@ -43,6 +52,7 @@ nasa_df <- easy_df %>%
          "geo_coord" = geo_coord)
 nasa_df[nasa_df=='NULL'] <- NA
 ```
+-->
 
 ## Task2
 
@@ -64,7 +74,7 @@ nasa_df$year <- str_replace(nasa_df$year, "T+", " ")
 nasa_df$year <- str_replace(nasa_df$year, "\\..*", "")
 nasa_df$seconds <- nasa_df$year %>%
   str_extract(":\\d{2}$") %>%
-  str_replace(":", "")
+  str_replace(":",)
 ```
 
 ```{r}
