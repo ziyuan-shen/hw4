@@ -56,6 +56,13 @@ nasa_df[nasa_df=='NULL'] <- NA
 
 ## Task2
 
+### select useful columns
+```{r select-cols}
+nasa_df <- nasa_df %>%
+  select(-(22:23)) %>%
+  select(-geolocation.type)
+```
+
 ### remove duplicates
 ```{r remove-dup}
 nasa_df <- nasa_df %>%
@@ -68,13 +75,28 @@ nasa_df <- nasa_df %>%
 nasa_df$id <- as.integer(nasa_df$id)
 ```
 
-### clean data time
-```{r}
+### clean date time
+```{r date-time}
 nasa_df$year <- str_replace(nasa_df$year, "T+", " ")
 nasa_df$year <- str_replace(nasa_df$year, "\\..*", "")
-nasa_df$seconds <- nasa_df$year %>%
-  str_extract(":\\d{2}$") %>%
-  str_replace(":",)
+nasa_df <- nasa_df %>%
+  separate(col=year, into=c('year', 'month', 'day'), sep='-') %>%
+  separate(col=day, into=c('day', 'hours'), sep=" ") %>%
+  separate(col=hours, into=(c('hours', 'minutes', 'seconds')), sep=':')
+time_names <- c('year', 'month', 'day', 'hours', 'minutes', 'seconds')
+nasa_df[time_names] <- nasa_df[time_names] %>%
+  map(as.integer)
+```
+
+### clean coordinates
+```{r geo-coords}
+# rename column
+names(nasa_df)[names(nasa_df) == 'geolocation.coordinates1'] <- 'geo_coord1'
+names(nasa_df)[names(nasa_df) == 'geolocation.coordinates2'] <- 'geo_coord2'
+nasa_df$geo_coord1 <- nasa_df$geo_coord1 %>%
+  str_extract("-?\\d*\\.?\\d*$")
+nasa_df$geo_coord2 <- nasa_df$geo_coord2 %>%
+  str_extract("-?\\d*\\.?\\d*$")
 ```
 
 ```{r}
