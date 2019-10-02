@@ -37,7 +37,8 @@ easy_df <- do.call(rbind, easy_part) %>%
   data.frame(stringsAsFactors = FALSE)
 
 geo_coord <- map(nasa, list("geolocation", "coordinates"))
-features <- map(nasa, `[[`, "features")
+features <- map(nasa, `[[`, "features") %>%
+  map(unlist)
 nasa_df <- easy_df %>%
   mutate("features" = features,
          "geo_coord" = geo_coord)
@@ -45,4 +46,5 @@ nasa_df <- easy_df %>%
 
 ## Task2
 ```{r task-2}
+
 ```
