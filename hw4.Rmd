@@ -27,7 +27,6 @@ nasa <- readRDS(file = "nasa.rds")
 
 ## Task1
 ```{r task-1}
-#easy_df[easy_df=='NULL'] <- NA
 #easy_df <- data.frame(lapply(easy_df, unlist), stringsAsFactoers=FALSE)
 var_names <- names(nasa[[1]])
 easy_part <- map(nasa, `[`, var_names[1:9])
@@ -42,9 +41,32 @@ features <- map(nasa, `[[`, "features") %>%
 nasa_df <- easy_df %>%
   mutate("features" = features,
          "geo_coord" = geo_coord)
+nasa_df[nasa_df=='NULL'] <- NA
 ```
 
 ## Task2
-```{r task-2}
 
+### remove duplicates
+```{r remove-dup}
+nasa_df <- nasa_df %>%
+  filter(!duplicated(nasa_df))
+```
+
+
+### clean id
+```{r id}
+nasa_df$id <- as.integer(nasa_df$id)
+```
+
+### clean data time
+```{r}
+nasa_df$year <- str_replace(nasa_df$year, "T+", " ")
+nasa_df$year <- str_replace(nasa_df$year, "\\..*", "")
+nasa_df$seconds <- nasa_df$year %>%
+  str_extract(":\\d{2}$") %>%
+  str_replace(":", "")
+```
+
+```{r}
+nasa_df
 ```
