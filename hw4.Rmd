@@ -94,9 +94,14 @@ nasa_df[time_names] <- nasa_df[time_names] %>%
 names(nasa_df)[names(nasa_df) == 'geolocation.coordinates1'] <- 'geo_coord1'
 names(nasa_df)[names(nasa_df) == 'geolocation.coordinates2'] <- 'geo_coord2'
 nasa_df$geo_coord1 <- nasa_df$geo_coord1 %>%
-  str_extract("-?\\d*\\.?\\d*$")
+  str_extract("-?\\d*\\.?\\d*$") %>%
+  as.numeric()
 nasa_df$geo_coord2 <- nasa_df$geo_coord2 %>%
-  str_extract("-?\\d*\\.?\\d*$")
+  str_extract("-?\\d*\\.?\\d*$") %>%
+  as.numeric()
+nasa_df$geo_coords <- map2(nasa_df$geo_coord1, nasa_df$geo_coord2, ~ c(.x, .y))
+nasa_df <- nasa_df %>%
+  select(-'geo_coord1', -'geo_coord2')
 ```
 
 ```{r}
