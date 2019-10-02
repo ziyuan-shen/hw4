@@ -14,12 +14,35 @@ knitr::opts_chunk$set(echo = TRUE, comment = NA, message = FALSE)
 ## Packages
 
 ```{r packages}
-library(tidyverse)
+require(tidyverse)
 ```
 
 ## Data
 
-```{r}
+```{r read-data}
 nasa <- readRDS(file = "nasa.rds")
 ```
 
+
+
+## Task1
+```{r task-1}
+#easy_df[easy_df=='NULL'] <- NA
+#easy_df <- data.frame(lapply(easy_df, unlist), stringsAsFactoers=FALSE)
+var_names <- names(nasa[[1]])
+easy_part <- map(nasa, `[`, var_names[1:9])
+easy_df <- do.call(rbind, easy_part) %>%
+  data.frame(stringsAsFactors = FALSE) %>%
+  lapply(as.character) %>%
+  data.frame(stringsAsFactors = FALSE)
+
+geo_coord <- map(nasa, list("geolocation", "coordinates"))
+features <- map(nasa, `[[`, "features")
+nasa_df <- easy_df %>%
+  mutate("features" = features,
+         "geo_coord" = geo_coord)
+```
+
+## Task2
+```{r task-2}
+```
