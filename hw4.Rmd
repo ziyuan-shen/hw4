@@ -23,19 +23,8 @@ require(tidyverse)
 nasa <- readRDS(file = "nasa.rds")
 ```
 
-
-
-## Task1
-```{r task-1}
-nasa_df <- nasa %>%
-  lapply(unlist) %>%
-  lapply(data.frame, stringsAsFactors = FALSE) %>%
-  lapply(t) %>%
-  lapply(data.frame, stringsAsFactors = FALSE) %>%
-  bind_rows()
-```
 <!--
-```{r task-1}
+```{r task}
 #easy_df <- data.frame(lapply(easy_df, unlist), stringsAsFactoers=FALSE)
 var_names <- names(nasa[[1]])
 easy_part <- map(nasa, `[`, var_names[1:9])
@@ -53,6 +42,17 @@ nasa_df <- easy_df %>%
 nasa_df[nasa_df=='NULL'] <- NA
 ```
 -->
+
+## Task1
+```{r task-1}
+nasa_df <- nasa %>%
+  lapply(unlist) %>%
+  lapply(data.frame, stringsAsFactors = FALSE) %>%
+  lapply(t) %>%
+  lapply(data.frame, stringsAsFactors = FALSE) %>%
+  bind_rows()
+```
+
 
 ## Task2
 
@@ -104,6 +104,23 @@ nasa_df <- nasa_df %>%
   select(-'geo_coord1', -'geo_coord2')
 ```
 
+### clean features
 ```{r}
+nasa_df$features[nasa_df$features == 'n/a'] <- NA
+nasa_df$features[nasa_df$features == 'NA'] <- NA
+nasa_df$features[nasa_df$features == 'unknown'] <- NA
+for (feature in names(nasa_df)[15:22])
+{
+  nasa_df$features <- map2(nasa_df$features, nasa_df[[feature]], ~c(.x, .y))
+}
+nasa_df <- nasa_df %>%
+  select(-('features1':'features8'))
+nasa_df$features <- nasa_df$features %>%
+  map(function (x) {x[!is.na(x)]})
+```
+
+
+```{r show=FALSE}
 nasa_df
 ```
+
